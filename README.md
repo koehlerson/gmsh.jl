@@ -1,11 +1,13 @@
 # gmsh.jl
 
-#[![][gitter-img]][gitter-url]
-#[![][travis-img]][travis-url]
-#[![][pkg-1.0-img]][pkg-1.0-url]
-#[![][pkg-1.1-img]][pkg-1.1-url]
-#[![][coveralls-img]][coveralls-url]
-#[![][issues-img]][issues-url]
+<!---
+[![][gitter-img]][gitter-url]
+[![][travis-img]][travis-url]
+[![][pkg-1.0-img]][pkg-1.0-url]
+[![][pkg-1.1-img]][pkg-1.1-url]
+[![][coveralls-img]][coveralls-url]
+[![][issues-img]][issues-url]
+-->
 
 gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for gmsh: a three-dimensional finite element mesh generator.
 
