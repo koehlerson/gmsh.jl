@@ -1,4 +1,4 @@
-# Gmsh.jl
+# gmsh.jl
 
 [![][gitter-img]][gitter-url]
 [![][travis-img]][travis-url]
@@ -7,15 +7,12 @@
 [![][coveralls-img]][coveralls-url]
 [![][issues-img]][issues-url]
 
-Gmsh.jl contains API for Gmsh: a three-dimensional finite element mesh generator.
-With the help of Gmsh.jl, it is possible add parametric model construction and/or
-automatic mesh generation to a FEM pipeline.
+gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for gmsh: a three-dimensional finite element mesh generator.
 
-Gmsh official [API](https://gitlab.onelab.info/gmsh/gmsh/blob/master/api/gmsh.jl)
-can be accessed by writing
+## Example
 
 ```julia
-import Gmsh: gmsh
+using gmsh
 ```
 
 After that, follow the official documentation of Gmsh. For example, `tutorial/t1`
