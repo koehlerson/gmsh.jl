@@ -1,8 +1,5 @@
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
-deps/deps.jl
-deps/build.log
-deps/usr
-test/t1.msh
 Manifest.toml
+**.msh
