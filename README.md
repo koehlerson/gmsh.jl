@@ -1,15 +1,18 @@
 # gmsh.jl
+[![][docs-dev-img]][docs-dev-url]
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
 
-<!---
-[![][gitter-img]][gitter-url]
-[![][travis-img]][travis-url]
-[![][pkg-1.0-img]][pkg-1.0-url]
-[![][pkg-1.1-img]][pkg-1.1-url]
-[![][coveralls-img]][coveralls-url]
-[![][issues-img]][issues-url]
--->
+[docs-dev-url]: http://koehlerson.github.io/gmsh.jl/dev/
 
-gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for gmsh: a three-dimensional finite element mesh generator.
+
+gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for Gmsh: a three-dimensional finite element mesh generator.
+Currently, only the built-in geometry kernel is supported in `gmsh_jll.jl`.
+
+## Installation
+
+```julia
+]add https://github.com/koehlerson/gmsh.jl.git
+```
 
 ## Example
 
@@ -17,8 +20,8 @@ gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for gmsh: a t
 using gmsh
 ```
 
-After that, follow the official documentation of Gmsh. For example, `tutorial/t1`
-using api is done as follows:
+After that, follow the commented examples in `examples`. The `tutorial/t1.jl` from the [official Gmsh repository](https://gitlab.onelab.info/gmsh/gmsh)
+can be realized with this package as follows:
 
 ```julia
 gmsh.initialize()
@@ -44,21 +47,3 @@ gmsh.model.mesh.generate(2)
 gmsh.write("t1.msh")
 gmsh.finalize()
 ```
-
-[gitter-img]: https://badges.gitter.im/Join%20Chat.svg
-[gitter-url]: https://gitter.im/JuliaFEM/JuliaFEM.jl
-
-[travis-img]: https://travis-ci.org/JuliaFEM/Gmsh.jl.svg?branch=master
-[travis-url]: https://travis-ci.org/JuliaFEM/Gmsh.jl
-
-[coveralls-img]: https://coveralls.io/repos/github/JuliaFEM/Gmsh.jl/badge.svg?branch=master
-[coveralls-url]: https://coveralls.io/github/JuliaFEM/Gmsh.jl?branch=master
-
-[issues-img]: https://img.shields.io/github/issues/JuliaFEM/Gmsh.jl.svg
-[issues-url]: https://github.com/JuliaFEM/Gmsh.jl/issues
-
-[pkg-1.0-img]: http://pkg.julialang.org/badges/Gmsh_1.0.svg
-[pkg-1.0-url]: http://pkg.julialang.org/?pkg=Gmsh&ver=1.0
-
-[pkg-1.1-img]: http://pkg.julialang.org/badges/Gmsh_1.1.svg
-[pkg-1.1-url]: http://pkg.julialang.org/?pkg=Gmsh&ver=1.1
