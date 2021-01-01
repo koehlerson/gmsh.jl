@@ -32,7 +32,7 @@ gmsh.model.occ.addCylinder
 gmsh.model.occ.addCone
 gmsh.model.occ.addWedge
 gmsh.model.occ.addTorus
-gmsh.model.occ.addTrhuSections
+gmsh.model.occ.addThruSections
 gmsh.model.occ.addThickSolid
 gmsh.model.occ.extrude
 gmsh.model.occ.revolve

@@ -44,5 +44,5 @@ gmsh.model.getVisibility
 gmsh.model.setVisibilityPerWindow
 gmsh.model.setColor
 gmsh.model.getColor
-gmsh.model.setCoorinates
+gmsh.model.setCoordinates
 ```
