@@ -7,8 +7,12 @@
 [docs-dev-url]: http://koehlerson.github.io/gmsh.jl/dev/
 
 
-gmsh.jl contains the `libgmsh.so` artifact and Julia API `gmsh.jl` for Gmsh: a three-dimensional finite element mesh generator.
+gmsh.jl contains the `libgmsh.so`/`gmsh.dll`
+artifact and Julia API `gmsh.jl` for Gmsh: a three-dimensional finite element mesh generator.
 Currently, only the built-in geometry kernel is supported in `gmsh_jll.jl`.
+
+All credits go to the Gmsh devs. This package only copy pasted the `gmsh.jl` API and used `BinaryBuilder.jl` and `Yggdrasil` 
+to deploy the binaries.
 
 ## Installation
 
