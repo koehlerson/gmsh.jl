@@ -10,7 +10,7 @@ GENERATEDEXAMPLES = [joinpath("examples", f) for f in (
     "t4.md",
     "t5.md",
     "t10.md",
-    "t16.md"
+    #"t16.md"
     )]
 
 makedocs(sitename="Gmsh API for Julia",
