@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Tutorial 3 · Gmsh API for Julia</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Gmsh API for Julia</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../t1/">Tutorial 1</a></li><li><a class="tocitem" href="../t2/">Tutorial 2</a></li><li class="is-active"><a class="tocitem" href>Tutorial 3</a><ul class="internal"><li><a class="tocitem" href="#Extruded-meshes,-options"><span>Extruded meshes, options</span></a></li></ul></li><li><a class="tocitem" href="../t4/">Tutorial 4</a></li><li><a class="tocitem" href="../t5/">Tutorial 5</a></li><li><a class="tocitem" href="../t10/">Tutorial 10</a></li></ul></li><li><span class="tocitem">Built-in Geometry Kernel</span><ul><li><a class="tocitem" href="../../geo/geometry/">Geometry</a></li><li><a class="tocitem" href="../../geo/mesh/">Mesh Constraints</a></li></ul></li><li><span class="tocitem">Model</span><ul><li><a class="tocitem" href="../../model/model/">Model</a></li><li><a class="tocitem" href="../../model/mesh/">Meshing</a></li></ul></li><li><a class="tocitem" href="../../options/options/">Options</a></li><li><a class="tocitem" href="../../occ/occ/">OpenCASCADE Kernel</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorial</a></li><li class="is-active"><a href>Tutorial 3</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Tutorial 3</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/koehlerson/gmsh.jl/blob/master/docs/src/literate/t3.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Tutorial-3"><a class="docs-heading-anchor" href="#Tutorial-3">Tutorial 3</a><a id="Tutorial-3-1"></a><a class="docs-heading-anchor-permalink" href="#Tutorial-3" title="Permalink"></a></h1><h2 id="Extruded-meshes,-options"><a class="docs-heading-anchor" href="#Extruded-meshes,-options">Extruded meshes, options</a><a id="Extruded-meshes,-options-1"></a><a class="docs-heading-anchor-permalink" href="#Extruded-meshes,-options" title="Permalink"></a></h2><pre><code class="language-julia">import gmsh</code></pre><pre><code class="language-julia">gmsh.initialize()</code></pre><pre><code class="language-julia">gmsh.model.add(&quot;t3&quot;)</code></pre><p>Copied from tutorial 1:</p><pre><code class="language-julia">lc = 1e-2
+gmsh.model.geo.addPoint(0, 0, 0, lc, 1)
+gmsh.model.geo.addPoint(.1, 0,  0, lc, 2)
+gmsh.model.geo.addPoint(.1, .3, 0, lc, 3)
+gmsh.model.geo.addPoint(0, .3, 0, lc, 4)
+gmsh.model.geo.addLine(1, 2, 1)
+gmsh.model.geo.addLine(3, 2, 2)
+gmsh.model.geo.addLine(3, 4, 3)
+gmsh.model.geo.addLine(4, 1, 4)
+gmsh.model.geo.addCurveLoop([4, 1, -2, 3], 1)
+gmsh.model.geo.addPlaneSurface([1], 1)
+gmsh.model.geo.synchronize()
+gmsh.model.addPhysicalGroup(0, [1, 2], 1)
+gmsh.model.addPhysicalGroup(1, [1, 2], 2)
+gmsh.model.addPhysicalGroup(2, [1], 6)
+gmsh.model.setPhysicalName(2, 6, &quot;My surface&quot;)</code></pre><p>As in Tutorial 2, we plan to perform an extrusion along the z axis.  But here, instead of only extruding the geometry, we also want to extrude the 2D mesh. This is done with the same <code>extrude()</code> function, but by specifying element &#39;Layers&#39; (2 layers in this case, the first one with 8 subdivisions and the second one with 2 subdivisions, both with a height of h/2). The number of elements for each layer and the (end) height of each layer are specified in two vectors:</p><pre><code class="language-julia">h = 0.1
+angle = 90.
+ov = gmsh.model.geo.extrude([(2,1)], 0, 0, h, [8,2], [0.5,1])</code></pre><pre class="documenter-example-output">6-element Array{Tuple{Int32,Int32},1}:
+ (2, 28)
+ (3, 1)
+ (2, 15)
+ (2, 19)
+ (2, 23)
+ (2, 27)</pre><p>The extrusion can also be performed with a rotation instead of a translation, and the resulting mesh can be recombined into prisms (we use only one layer here, with 7 subdivisions). All rotations are specified by an an axis point (-0.1, 0, 0.1), an axis direction (0, 1, 0), and a rotation angle (-Pi/2):</p><pre><code class="language-julia">ov = gmsh.model.geo.revolve([(2,28)], -0.1,0,0.1, 0,1,0, -pi/2, [7])</code></pre><pre class="documenter-example-output">6-element Array{Tuple{Int32,Int32},1}:
+ (2, 50)
+ (3, 2)
+ (2, 37)
+ (2, 41)
+ (2, 45)
+ (2, 49)</pre><p>Using the built-in geometry kernel, only rotations with angles &lt; Pi are supported. To do a full turn, you will thus need to apply at least 3 rotations. The OpenCASCADE geometry kernel does not have this limitation.</p><p>A <code>translation(-2*h, 0, 0)</code> and a <code>rotation((0,0.15,0.25), (1,0,0), Pi/2)</code> can also be combined to form a &quot;twist&quot;.  The last (optional) argument for the <code>extrude()</code> and <code>twist()</code> functions specifies whether the extruded mesh should be recombined or not.</p><pre><code class="language-julia">ov = gmsh.model.geo.twist([(2,50)], 0,0.15,0.25, -2*h,0,0, 1,0,0,
+                          angle*pi/180., [10], [], true)</code></pre><pre class="documenter-example-output">6-element Array{Tuple{Int32,Int32},1}:
+ (2, 72)
+ (3, 3)
+ (2, 59)
+ (2, 63)
+ (2, 67)
+ (2, 71)</pre><pre><code class="language-julia">gmsh.model.geo.synchronize()</code></pre><p>All the extrusion functions return a vector of extruded entities: the &quot;top&quot; of the extruded surface (in <code>ov[0]</code>), the newly created volume (in <code>ov[1]</code>) and the tags of the lateral surfaces (in <code>ov[2]</code>, <code>ov[3]</code>, ...).</p><p>We can then define a new physical volume (with tag 101) to group all the elementary volumes:</p><pre><code class="language-julia">gmsh.model.addPhysicalGroup(3, [1, 2, ov[2][2]], 101)</code></pre><pre class="documenter-example-output">101</pre><pre><code class="language-julia">gmsh.model.mesh.generate(3)
+gmsh.write(&quot;t3.msh&quot;)</code></pre><pre class="documenter-example-output">Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 20%] Meshing curve 4 (Line)
+Info    : [ 20%] Meshing curve 8 (Extruded)
+Info    : [ 20%] Meshing curve 9 (Extruded)
+Info    : [ 30%] Meshing curve 10 (Extruded)
+Info    : [ 30%] Meshing curve 11 (Extruded)
+Info    : [ 30%] Meshing curve 13 (Extruded)
+Info    : [ 40%] Meshing curve 14 (Extruded)
+Info    : [ 40%] Meshing curve 18 (Extruded)
+Info    : [ 40%] Meshing curve 22 (Extruded)
+Info    : [ 50%] Meshing curve 30 (Extruded)
+Info    : [ 50%] Meshing curve 31 (Extruded)
+Info    : [ 50%] Meshing curve 32 (Extruded)
+Info    : [ 60%] Meshing curve 33 (Extruded)
+Info    : [ 60%] Meshing curve 35 (Extruded)
+Info    : [ 70%] Meshing curve 36 (Extruded)
+Info    : [ 70%] Meshing curve 40 (Extruded)
+Info    : [ 70%] Meshing curve 44 (Extruded)
+Info    : [ 80%] Meshing curve 52 (Extruded)
+Info    : [ 80%] Meshing curve 53 (Extruded)
+Info    : [ 80%] Meshing curve 54 (Extruded)
+Info    : [ 90%] Meshing curve 55 (Extruded)
+Info    : [ 90%] Meshing curve 57 (Extruded)
+Info    : [ 90%] Meshing curve 58 (Extruded)
+Info    : [100%] Meshing curve 62 (Extruded)
+Info    : [100%] Meshing curve 66 (Extruded)
+Info    : Done meshing 1D (Wall 0.000606943s, CPU 0.00061s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 1 (Plane, Frontal-Delaunay)
+Info    : [ 10%] Meshing surface 15 (Extruded)
+Info    : [ 20%] Meshing surface 19 (Extruded)
+Info    : [ 20%] Meshing surface 23 (Extruded)
+Info    : [ 30%] Meshing surface 27 (Extruded)
+Info    : [ 40%] Meshing surface 28 (Extruded)
+Info    : [ 40%] Meshing surface 37 (Extruded)
+Info    : [ 50%] Meshing surface 41 (Extruded)
+Info    : [ 50%] Meshing surface 45 (Extruded)
+Info    : [ 60%] Meshing surface 49 (Extruded)
+Info    : [ 70%] Meshing surface 50 (Extruded)
+Info    : [ 70%] Meshing surface 59 (Extruded)
+Info    : [ 80%] Meshing surface 63 (Extruded)
+Info    : [ 90%] Meshing surface 67 (Extruded)
+Info    : [ 90%] Meshing surface 71 (Extruded)
+Info    : [100%] Meshing surface 72 (Extruded)
+Info    : Done meshing 2D (Wall 0.0349357s, CPU 0.034931s)
+Info    : Meshing 3D...
+Info    : Meshing volume 1 (Extruded)
+Info    : Meshing volume 2 (Extruded)
+Info    : Meshing volume 3 (Extruded)
+Info    : Subdividing extruded mesh
+Info    : Swapping 391
+Info    : Swapping 51
+Info    : Swapping 0
+Info    : Remeshing surface 15
+Info    : Meshing surface 15 (Extruded)
+Info    : Remeshing surface 27
+Info    : Meshing surface 27 (Extruded)
+Info    : Remeshing surface 19
+Info    : Meshing surface 19 (Extruded)
+Info    : Remeshing surface 23
+Info    : Meshing surface 23 (Extruded)
+Info    : Remeshing surface 45
+Info    : Meshing surface 45 (Extruded)
+Info    : Remeshing surface 41
+Info    : Meshing surface 41 (Extruded)
+Info    : Remeshing surface 49
+Info    : Meshing surface 49 (Extruded)
+Info    : Remeshing surface 37
+Info    : Meshing surface 37 (Extruded)
+Info    : Done meshing 3D (Wall 0.241047s, CPU 0.241034s)
+Info    : Optimizing mesh...
+Info    : Done optimizing mesh (Wall 0.00128949s, CPU 0.001288s)
+Info    : 11302 nodes 51042 elements
+Info    : Writing &#39;t3.msh&#39;...
+Info    : Done writing &#39;t3.msh&#39;</pre><pre><code class="language-julia">gmsh.finalize()</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../t2/">« Tutorial 2</a><a class="docs-footer-nextpage" href="../t4/">Tutorial 4 »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 2 January 2021 17:40">Saturday 2 January 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Tutorial 5 · Gmsh API for Julia</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Gmsh API for Julia</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../t1/">Tutorial 1</a></li><li><a class="tocitem" href="../t2/">Tutorial 2</a></li><li><a class="tocitem" href="../t3/">Tutorial 3</a></li><li><a class="tocitem" href="../t4/">Tutorial 4</a></li><li class="is-active"><a class="tocitem" href>Tutorial 5</a><ul class="internal"><li><a class="tocitem" href="#Mesh-sizes,-holes-in-volumes"><span>Mesh sizes, holes in volumes</span></a></li></ul></li><li><a class="tocitem" href="../t10/">Tutorial 10</a></li></ul></li><li><span class="tocitem">Built-in Geometry Kernel</span><ul><li><a class="tocitem" href="../../geo/geometry/">Geometry</a></li><li><a class="tocitem" href="../../geo/mesh/">Mesh Constraints</a></li></ul></li><li><span class="tocitem">Model</span><ul><li><a class="tocitem" href="../../model/model/">Model</a></li><li><a class="tocitem" href="../../model/mesh/">Meshing</a></li></ul></li><li><a class="tocitem" href="../../options/options/">Options</a></li><li><a class="tocitem" href="../../occ/occ/">OpenCASCADE Kernel</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Tutorial</a></li><li class="is-active"><a href>Tutorial 5</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Tutorial 5</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/koehlerson/gmsh.jl/blob/master/docs/src/literate/t5.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Tutorial-5"><a class="docs-heading-anchor" href="#Tutorial-5">Tutorial 5</a><a id="Tutorial-5-1"></a><a class="docs-heading-anchor-permalink" href="#Tutorial-5" title="Permalink"></a></h1><h2 id="Mesh-sizes,-holes-in-volumes"><a class="docs-heading-anchor" href="#Mesh-sizes,-holes-in-volumes">Mesh sizes, holes in volumes</a><a id="Mesh-sizes,-holes-in-volumes-1"></a><a class="docs-heading-anchor-permalink" href="#Mesh-sizes,-holes-in-volumes" title="Permalink"></a></h2><pre><code class="language-julia">import gmsh</code></pre><pre><code class="language-julia">gmsh.initialize()</code></pre><pre><code class="language-julia">gmsh.model.add(&quot;t5&quot;)</code></pre><pre><code class="language-julia">lcar1 = .1
+lcar2 = .0005
+lcar3 = .055</code></pre><pre class="documenter-example-output">0.055</pre><p>If we wanted to change these mesh sizes globally (without changing the above definitions), we could give a global scaling factor for all mesh sizes with e.g.</p><p><code>gmsh.option.setNumber(&quot;Mesh.MeshSizeFactor&quot;, 0.1);</code> See Tutorial 10 for more information about mesh sizes.</p><p>We proceed by defining some elementary entities describing a truncated cube:</p><pre><code class="language-julia">gmsh.model.geo.addPoint(0.5,0.5,0.5, lcar2, 1)
+gmsh.model.geo.addPoint(0.5,0.5,0, lcar1, 2)
+gmsh.model.geo.addPoint(0,0.5,0.5, lcar1, 3)
+gmsh.model.geo.addPoint(0,0,0.5, lcar1, 4)
+gmsh.model.geo.addPoint(0.5,0,0.5, lcar1, 5)
+gmsh.model.geo.addPoint(0.5,0,0, lcar1, 6)
+gmsh.model.geo.addPoint(0,0.5,0, lcar1, 7)
+gmsh.model.geo.addPoint(0,1,0, lcar1, 8)
+gmsh.model.geo.addPoint(1,1,0, lcar1, 9)
+gmsh.model.geo.addPoint(0,0,1, lcar1, 10)
+gmsh.model.geo.addPoint(0,1,1, lcar1, 11)
+gmsh.model.geo.addPoint(1,1,1, lcar1, 12)
+gmsh.model.geo.addPoint(1,0,1, lcar1, 13)
+gmsh.model.geo.addPoint(1,0,0, lcar1, 14)</code></pre><pre class="documenter-example-output">14</pre><pre><code class="language-julia">gmsh.model.geo.addLine(8,9, 1);   gmsh.model.geo.addLine(9,12, 2)
+gmsh.model.geo.addLine(12,11, 3); gmsh.model.geo.addLine(11,8, 4)
+gmsh.model.geo.addLine(9,14, 5);  gmsh.model.geo.addLine(14,13, 6)
+gmsh.model.geo.addLine(13,12, 7); gmsh.model.geo.addLine(11,10, 8)
+gmsh.model.geo.addLine(10,13, 9); gmsh.model.geo.addLine(10,4, 10)
+gmsh.model.geo.addLine(4,5, 11);  gmsh.model.geo.addLine(5,6, 12)
+gmsh.model.geo.addLine(6,2, 13);  gmsh.model.geo.addLine(2,1, 14)
+gmsh.model.geo.addLine(1,3, 15);  gmsh.model.geo.addLine(3,7, 16)
+gmsh.model.geo.addLine(7,2, 17);  gmsh.model.geo.addLine(3,4, 18)
+gmsh.model.geo.addLine(5,1, 19);  gmsh.model.geo.addLine(7,8, 20)
+gmsh.model.geo.addLine(6,14, 21);</code></pre><pre><code class="language-julia">gmsh.model.geo.addCurveLoop([-11,-19,-15,-18], 22)
+gmsh.model.geo.addPlaneSurface([22], 23)
+gmsh.model.geo.addCurveLoop([16,17,14,15], 24)
+gmsh.model.geo.addPlaneSurface([24], 25)
+gmsh.model.geo.addCurveLoop([-17,20,1,5,-21,13], 26)
+gmsh.model.geo.addPlaneSurface([26], 27)
+gmsh.model.geo.addCurveLoop([-4,-1,-2,-3], 28)
+gmsh.model.geo.addPlaneSurface([28], 29)
+gmsh.model.geo.addCurveLoop([-7,2,-5,-6], 30)
+gmsh.model.geo.addPlaneSurface([30], 31)
+gmsh.model.geo.addCurveLoop([6,-9,10,11,12,21], 32)
+gmsh.model.geo.addPlaneSurface([32], 33)
+gmsh.model.geo.addCurveLoop([7,3,8,9], 34)
+gmsh.model.geo.addPlaneSurface([34], 35)
+gmsh.model.geo.addCurveLoop([-10,18,-16,-20,4,-8], 36)
+gmsh.model.geo.addPlaneSurface([36], 37)
+gmsh.model.geo.addCurveLoop([-14,-13,-12,19], 38)
+gmsh.model.geo.addPlaneSurface([38], 39)</code></pre><pre class="documenter-example-output">39</pre><pre><code class="language-julia">shells = []</code></pre><pre class="documenter-example-output">Any[]</pre><pre><code class="language-julia">sl = gmsh.model.geo.addSurfaceLoop([35,31,29,37,33,23,39,25,27])
+push!(shells, sl)</code></pre><pre class="documenter-example-output">1-element Array{Any,1}:
+ 1</pre><p>This function will create a spherical hole in a volume. We don&#39;t specify tags manually, and let the functions return them automatically:</p><pre><code class="language-julia">function cheeseHole(x, y, z, r, lc, shells)
+    p1 = gmsh.model.geo.addPoint(x,  y,  z,   lc)
+    p2 = gmsh.model.geo.addPoint(x+r,y,  z,   lc)
+    p3 = gmsh.model.geo.addPoint(x,  y+r,z,   lc)
+    p4 = gmsh.model.geo.addPoint(x,  y,  z+r, lc)
+    p5 = gmsh.model.geo.addPoint(x-r,y,  z,   lc)
+    p6 = gmsh.model.geo.addPoint(x,  y-r,z,   lc)
+    p7 = gmsh.model.geo.addPoint(x,  y,  z-r, lc)
+
+    c1 = gmsh.model.geo.addCircleArc(p2,p1,p7)
+    c2 = gmsh.model.geo.addCircleArc(p7,p1,p5)
+    c3 = gmsh.model.geo.addCircleArc(p5,p1,p4)
+    c4 = gmsh.model.geo.addCircleArc(p4,p1,p2)
+    c5 = gmsh.model.geo.addCircleArc(p2,p1,p3)
+    c6 = gmsh.model.geo.addCircleArc(p3,p1,p5)
+    c7 = gmsh.model.geo.addCircleArc(p5,p1,p6)
+    c8 = gmsh.model.geo.addCircleArc(p6,p1,p2)
+    c9 = gmsh.model.geo.addCircleArc(p7,p1,p3)
+    c10 = gmsh.model.geo.addCircleArc(p3,p1,p4)
+    c11 = gmsh.model.geo.addCircleArc(p4,p1,p6)
+    c12 = gmsh.model.geo.addCircleArc(p6,p1,p7)
+
+    l1 = gmsh.model.geo.addCurveLoop([c5,c10,c4])
+    l2 = gmsh.model.geo.addCurveLoop([c9,-c5,c1])
+    l3 = gmsh.model.geo.addCurveLoop([c12,-c8,-c1])
+    l4 = gmsh.model.geo.addCurveLoop([c8,-c4,c11])
+    l5 = gmsh.model.geo.addCurveLoop([-c10,c6,c3])
+    l6 = gmsh.model.geo.addCurveLoop([-c11,-c3,c7])
+    l7 = gmsh.model.geo.addCurveLoop([-c2,-c7,-c12])
+    l8 = gmsh.model.geo.addCurveLoop([-c6,-c9,c2])
+
+    s1 = gmsh.model.geo.addSurfaceFilling([l1])
+    s2 = gmsh.model.geo.addSurfaceFilling([l2])
+    s3 = gmsh.model.geo.addSurfaceFilling([l3])
+    s4 = gmsh.model.geo.addSurfaceFilling([l4])
+    s5 = gmsh.model.geo.addSurfaceFilling([l5])
+    s6 = gmsh.model.geo.addSurfaceFilling([l6])
+    s7 = gmsh.model.geo.addSurfaceFilling([l7])
+    s8 = gmsh.model.geo.addSurfaceFilling([l8])
+
+    sl = gmsh.model.geo.addSurfaceLoop([s1, s2, s3, s4, s5, s6, s7, s8])
+    v = gmsh.model.geo.addVolume([sl])
+    push!(shells, sl)
+    return v
+end</code></pre><pre class="documenter-example-output">cheeseHole (generic function with 1 method)</pre><p>We create five holes in the cube:</p><pre><code class="language-julia">x = 0
+y = 0.75; z = 0; r = 0.09
+for t in 1:5
+    global x, z
+    x += 0.166
+    z += 0.166
+    v = cheeseHole(x, y, z, r, lcar3, shells)
+    gmsh.model.geo.addPhysicalGroup(3, [v], t)
+end</code></pre><p>The volume of the cube, without the 5 holes, is defined by 6 surface loops: the first surface loop defines the exterior surface; the surface loops other than the first one define holes:</p><pre><code class="language-julia">gmsh.model.geo.addVolume(shells, 186);</code></pre><pre><code class="language-julia">gmsh.model.geo.synchronize()</code></pre><p>We finally define a physical volume for the elements discretizing the cube, without the holes (for which physical groups were already defined in the <code>cheeseHole()</code> function):</p><pre><code class="language-julia">gmsh.model.addPhysicalGroup(3, [186], 10);</code></pre><p>To generate a curvilinear mesh and optimize it to produce provably valid curved elements (see A. Johnen, J.-F. Remacle and C. Geuzaine. Geometric validity of curvilinear finite elements. Journal of Computational Physics 233, pp. 359-372, 2013; and T. Toulorge, C. Geuzaine, J.-F. Remacle, J. Lambrechts. Robust untangling of curvilinear meshes. Journal of Computational Physics 254, pp. 8-26, 2013), you can uncomment the following lines:</p><p><code>gmsh.option.setNumber(&quot;Mesh.ElementOrder&quot;, 2)</code> <code>gmsh.option.setNumber(&quot;Mesh.HighOrderOptimize&quot;, 2)</code></p><pre><code class="language-julia">gmsh.model.mesh.generate(3)
+gmsh.write(&quot;t5.msh&quot;)</code></pre><pre class="documenter-example-output">Info    : Meshing 1D...
+Info    : [  0%] Meshing curve 1 (Line)
+Info    : [ 10%] Meshing curve 2 (Line)
+Info    : [ 10%] Meshing curve 3 (Line)
+Info    : [ 10%] Meshing curve 4 (Line)
+Info    : [ 10%] Meshing curve 5 (Line)
+Info    : [ 10%] Meshing curve 6 (Line)
+Info    : [ 10%] Meshing curve 7 (Line)
+Info    : [ 10%] Meshing curve 8 (Line)
+Info    : [ 10%] Meshing curve 9 (Line)
+Info    : [ 20%] Meshing curve 10 (Line)
+Info    : [ 20%] Meshing curve 11 (Line)
+Info    : [ 20%] Meshing curve 12 (Line)
+Info    : [ 20%] Meshing curve 13 (Line)
+Info    : [ 20%] Meshing curve 14 (Line)
+Info    : [ 20%] Meshing curve 15 (Line)
+Info    : [ 20%] Meshing curve 16 (Line)
+Info    : [ 20%] Meshing curve 17 (Line)
+Info    : [ 30%] Meshing curve 18 (Line)
+Info    : [ 30%] Meshing curve 19 (Line)
+Info    : [ 30%] Meshing curve 20 (Line)
+Info    : [ 30%] Meshing curve 21 (Line)
+Info    : [ 30%] Meshing curve 22 (Circle)
+Info    : [ 30%] Meshing curve 23 (Circle)
+Info    : [ 30%] Meshing curve 24 (Circle)
+Info    : [ 30%] Meshing curve 25 (Circle)
+Info    : [ 40%] Meshing curve 26 (Circle)
+Info    : [ 40%] Meshing curve 27 (Circle)
+Info    : [ 40%] Meshing curve 28 (Circle)
+Info    : [ 40%] Meshing curve 29 (Circle)
+Info    : [ 40%] Meshing curve 30 (Circle)
+Info    : [ 40%] Meshing curve 31 (Circle)
+Info    : [ 40%] Meshing curve 32 (Circle)
+Info    : [ 40%] Meshing curve 33 (Circle)
+Info    : [ 50%] Meshing curve 34 (Circle)
+Info    : [ 50%] Meshing curve 35 (Circle)
+Info    : [ 50%] Meshing curve 36 (Circle)
+Info    : [ 50%] Meshing curve 37 (Circle)
+Info    : [ 50%] Meshing curve 38 (Circle)
+Info    : [ 50%] Meshing curve 39 (Circle)
+Info    : [ 50%] Meshing curve 40 (Circle)
+Info    : [ 50%] Meshing curve 41 (Circle)
+Info    : [ 60%] Meshing curve 42 (Circle)
+Info    : [ 60%] Meshing curve 43 (Circle)
+Info    : [ 60%] Meshing curve 44 (Circle)
+Info    : [ 60%] Meshing curve 45 (Circle)
+Info    : [ 60%] Meshing curve 46 (Circle)
+Info    : [ 60%] Meshing curve 47 (Circle)
+Info    : [ 60%] Meshing curve 48 (Circle)
+Info    : [ 60%] Meshing curve 49 (Circle)
+Info    : [ 70%] Meshing curve 50 (Circle)
+Info    : [ 70%] Meshing curve 51 (Circle)
+Info    : [ 70%] Meshing curve 52 (Circle)
+Info    : [ 70%] Meshing curve 53 (Circle)
+Info    : [ 70%] Meshing curve 54 (Circle)
+Info    : [ 70%] Meshing curve 55 (Circle)
+Info    : [ 70%] Meshing curve 56 (Circle)
+Info    : [ 70%] Meshing curve 57 (Circle)
+Info    : [ 80%] Meshing curve 58 (Circle)
+Info    : [ 80%] Meshing curve 59 (Circle)
+Info    : [ 80%] Meshing curve 60 (Circle)
+Info    : [ 80%] Meshing curve 61 (Circle)
+Info    : [ 80%] Meshing curve 62 (Circle)
+Info    : [ 80%] Meshing curve 63 (Circle)
+Info    : [ 80%] Meshing curve 64 (Circle)
+Info    : [ 80%] Meshing curve 65 (Circle)
+Info    : [ 90%] Meshing curve 66 (Circle)
+Info    : [ 90%] Meshing curve 67 (Circle)
+Info    : [ 90%] Meshing curve 68 (Circle)
+Info    : [ 90%] Meshing curve 69 (Circle)
+Info    : [ 90%] Meshing curve 70 (Circle)
+Info    : [ 90%] Meshing curve 71 (Circle)
+Info    : [ 90%] Meshing curve 72 (Circle)
+Info    : [ 90%] Meshing curve 73 (Circle)
+Info    : [100%] Meshing curve 74 (Circle)
+Info    : [100%] Meshing curve 75 (Circle)
+Info    : [100%] Meshing curve 76 (Circle)
+Info    : [100%] Meshing curve 77 (Circle)
+Info    : [100%] Meshing curve 78 (Circle)
+Info    : [100%] Meshing curve 79 (Circle)
+Info    : [100%] Meshing curve 80 (Circle)
+Info    : [100%] Meshing curve 81 (Circle)
+Info    : Done meshing 1D (Wall 0.0255393s, CPU 0.025541s)
+Info    : Meshing 2D...
+Info    : [  0%] Meshing surface 23 (Plane, Frontal-Delaunay)
+Info    : [ 10%] Meshing surface 25 (Plane, Frontal-Delaunay)
+Info    : [ 10%] Meshing surface 27 (Plane, Frontal-Delaunay)
+Info    : [ 10%] Meshing surface 29 (Plane, Frontal-Delaunay)
+Info    : [ 10%] Meshing surface 31 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 33 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 35 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 37 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 39 (Plane, Frontal-Delaunay)
+Info    : [ 20%] Meshing surface 40 (Surface, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 41 (Surface, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 42 (Surface, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 43 (Surface, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 44 (Surface, Frontal-Delaunay)
+Info    : [ 30%] Meshing surface 45 (Surface, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 46 (Surface, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 47 (Surface, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 48 (Surface, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 49 (Surface, Frontal-Delaunay)
+Info    : [ 40%] Meshing surface 50 (Surface, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 51 (Surface, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 52 (Surface, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 53 (Surface, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 54 (Surface, Frontal-Delaunay)
+Info    : [ 50%] Meshing surface 55 (Surface, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 56 (Surface, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 57 (Surface, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 58 (Surface, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 59 (Surface, Frontal-Delaunay)
+Info    : [ 60%] Meshing surface 60 (Surface, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 61 (Surface, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 62 (Surface, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 63 (Surface, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 64 (Surface, Frontal-Delaunay)
+Info    : [ 70%] Meshing surface 65 (Surface, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 66 (Surface, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 67 (Surface, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 68 (Surface, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 69 (Surface, Frontal-Delaunay)
+Info    : [ 80%] Meshing surface 70 (Surface, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 71 (Surface, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 72 (Surface, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 73 (Surface, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 74 (Surface, Frontal-Delaunay)
+Info    : [ 90%] Meshing surface 75 (Surface, Frontal-Delaunay)
+Info    : [100%] Meshing surface 76 (Surface, Frontal-Delaunay)
+Info    : [100%] Meshing surface 77 (Surface, Frontal-Delaunay)
+Info    : [100%] Meshing surface 78 (Surface, Frontal-Delaunay)
+Info    : [100%] Meshing surface 79 (Surface, Frontal-Delaunay)
+Info    : Done meshing 2D (Wall 0.0728557s, CPU 0.07283s)
+Info    : Meshing 3D...
+Info    : 3D Meshing 6 volumes with 1 connected component
+Info    : Tetrahedrizing 1535 nodes...
+Info    : Done tetrahedrizing 1543 nodes (Wall 0.0280444s, CPU 0.028041s)
+Info    : Reconstructing mesh...
+Info    :  - Creating surface mesh
+Info    :  - Identifying boundary edges
+Info    :  - Recovering boundary
+Info    : Done reconstructing mesh (Wall 0.0540805s, CPU 0.054067s)
+Info    : Found volume 186
+Info    : Found volume 3
+Info    : Found volume 2
+Info    : Found volume 4
+Info    : Found volume 1
+Info    : Found volume 5
+Info    : It. 0 - 0 nodes created - worst tet radius 15.1729 (nodes removed 0 0)
+Info    : It. 500 - 491 nodes created - worst tet radius 1.41358 (nodes removed 0 9)
+Info    : It. 1000 - 990 nodes created - worst tet radius 1.1124 (nodes removed 0 10)
+Info    : 3D refinement terminated (2890 nodes total):
+Info    :  - 0 Delaunay cavities modified for star shapeness
+Info    :  - 10 nodes could not be inserted
+Info    :  - 13936 tetrahedra created in 0.0962166 sec. (144839 tets/s)
+Info    : Done meshing 3D (Wall 0.203613s, CPU 0.203599s)
+Info    : Optimizing mesh...
+Info    : Optimizing volume 1
+Info    : Optimization starts (volume = 0.00272564) with worst = 0.499334 / average = 0.670617:
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        15 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        36 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        15 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        36 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : Optimizing volume 2
+Info    : Optimization starts (volume = 0.00272581) with worst = 0.504447 / average = 0.670923:
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         0 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        17 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        56 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        37 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         0 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        17 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        56 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        37 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : Optimizing volume 3
+Info    : Optimization starts (volume = 0.002728) with worst = 0.499334 / average = 0.664608:
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        18 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        35 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        18 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        35 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : Optimizing volume 4
+Info    : Optimization starts (volume = 0.00272865) with worst = 0.499334 / average = 0.665029:
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        18 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        35 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        18 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        57 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        35 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : Optimizing volume 5
+Info    : Optimization starts (volume = 0.00272218) with worst = 0.499334 / average = 0.676226:
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        10 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        59 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        37 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         0 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :         0 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :         2 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :        10 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :        59 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :        37 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :         0 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :         0 elements
+Info    : Optimizing volume 186
+Info    : Optimization starts (volume = 0.86137) with worst = 0.0111303 / average = 0.737256:
+Info    : 0.00 &lt; quality &lt; 0.10 :        55 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :        85 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :       169 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :       269 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :       466 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :      1281 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :      2243 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :      3256 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :      3737 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :      1821 elements
+Info    : 301 edge swaps, 8 node relocations (volume = 0.86137): worst = 0.299852 / average = 0.750443 (Wall 0.00772244s, CPU 0.007723s)
+Info    : No ill-shaped tets in the mesh :-)
+Info    : 0.00 &lt; quality &lt; 0.10 :         0 elements
+Info    : 0.10 &lt; quality &lt; 0.20 :         0 elements
+Info    : 0.20 &lt; quality &lt; 0.30 :         1 elements
+Info    : 0.30 &lt; quality &lt; 0.40 :       262 elements
+Info    : 0.40 &lt; quality &lt; 0.50 :       470 elements
+Info    : 0.50 &lt; quality &lt; 0.60 :      1268 elements
+Info    : 0.60 &lt; quality &lt; 0.70 :      2255 elements
+Info    : 0.70 &lt; quality &lt; 0.80 :      3283 elements
+Info    : 0.80 &lt; quality &lt; 0.90 :      3783 elements
+Info    : 0.90 &lt; quality &lt; 1.00 :      1796 elements
+Info    : Done optimizing mesh (Wall 0.0242877s, CPU 0.024283s)
+Info    : 2895 nodes 17163 elements
+Info    : Writing &#39;t5.msh&#39;...
+Info    : Done writing &#39;t5.msh&#39;</pre><pre><code class="language-julia">gmsh.finalize()</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../t4/">« Tutorial 4</a><a class="docs-footer-nextpage" href="../t10/">Tutorial 10 »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Saturday 2 January 2021 17:40">Saturday 2 January 2021</span>. Using Julia version 1.5.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
