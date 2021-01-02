@@ -7,7 +7,7 @@
 # full documentation of all the functions in the API):
 import gmsh
 #
-# Before using any functions in the Python API, Gmsh must be initialized:
+# Before using any functions in the Julia API, Gmsh must be initialized:
 gmsh.initialize()
 #
 # Next we add a new model named "t1" (if `gmsh.model.add()` is not called a new
@@ -30,9 +30,7 @@ gmsh.model.geo.addPoint(0, 0, 0, lc, 1)
 #
 # The distribution of the mesh element sizes will be obtained by interpolation
 # of these mesh sizes throughout the geometry. Another method to specify mesh
-# sizes is to use general mesh size Fields (see `t10.jl`). A particular case is
-# the use of a background mesh (see `t7.jl`).
-#
+# sizes is to use general mesh size Fields (see `t10.jl`). 
 # If no target mesh size of provided, a default uniform coarse size will be used
 # for the model, based on the overall model size.
 #
