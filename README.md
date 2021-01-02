@@ -14,9 +14,12 @@ Currently, only the built-in geometry kernel is supported in `gmsh_jll.jl`.
 All credits go to the Gmsh devs. This package only copy pasted the `gmsh.jl` API and used `BinaryBuilder.jl` and `Yggdrasil` 
 to deploy the binaries.
 
+**Important**: All functionalities related to GUI and OpenCASCADE are **not supported** by the artifacts of the package. 
+OpenCASCADE support will be added in Future. Linux users can already utilize it by having a proper OpenCASCADE installation in their `PATH`.
+
 ## Installation
 
-```julia
+```
 ]add https://github.com/koehlerson/gmsh.jl.git
 ```
 
