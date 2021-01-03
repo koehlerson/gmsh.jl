@@ -57,8 +57,8 @@ p4 = gmsh.model.geo.addPoint(0, .3, 0, lc)
 # have to be unique per geometrical dimension.
 gmsh.model.geo.addLine(1, 2, 1)
 gmsh.model.geo.addLine(3, 2, 2)
-gmsh.model.geo.addLine(3, p4, 3)
-gmsh.model.geo.addLine(4, 1, p4)
+gmsh.model.geo.addLine(3, 4, 3)
+gmsh.model.geo.addLine(4, 1, 4)
 #
 # The third elementary entity is the surface. In order to define a simple
 # rectangular surface from the four curves defined above, a curve loop has first
@@ -101,11 +101,9 @@ gmsh.model.geo.synchronize()
 # Here we define a physical curve that groups the left, bottom and right curves
 # in a single group (with prescribed tag 5); and a physical surface with name
 # "My surface" (with an automatic tag) containing the geometrical surface 1:
-gmsh.model.addPhysicalGroup(0, [1, 2], 1)
-gmsh.model.addPhysicalGroup(1, [1, 2], 2)
-gmsh.model.addPhysicalGroup(2, [1], 6)
-#
-gmsh.model.setPhysicalName(2, 6, "My surface")
+gmsh.model.addPhysicalGroup(1, [1, 2, 4], 5)
+ps = gmsh.model.addPhysicalGroup(2, [1])
+gmsh.model.setPhysicalName(2, ps, "My surface")
 #
 # We can then generate a 2D mesh
 gmsh.model.mesh.generate(2)
